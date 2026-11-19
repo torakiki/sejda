@@ -46,15 +46,33 @@ class PageCopier {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageCopier.class);
 
-    private boolean optimize;
-    private Consumer<PDPage> hitAndClean = new NameResourcesDuplicator().andThen(new ResourcesHitter())
+    private final boolean optimize;
+    private final Consumer<PDPage> hitAndClean = new NameResourcesDuplicator().andThen(new ResourcesHitter())
             .andThen(new ResourceDictionaryCleaner()::clean);
 
     public PageCopier(boolean optimize) {
         this.optimize = optimize;
     }
 
-    public PDPage copyOf(PDPage page) {
+    /**
+     * Adds a copy of the page to the predictor. When optimizing, the resource dictionaries of the forms and soft mask groups found in the page
+     * resources are swapped with copies until the copy of the page has been added to the predictor (see {@link NestedResourcesSwapper}), this way the
+     * hit and clean process doesn't prune resource dictionaries of the original document that might be shared with other pages.
+     */
+    public void addCopyTo(PDPage page, ExistingPagesSizePredictor predictor) throws IOException {
+        try (var swapper = new NestedResourcesSwapper()) {
+            if (optimize) {
+                swapper.swap(page);
+            }
+            predictor.addPage(copyOf(page));
+        }
+    }
+
+    /**
+     * When optimizing, the hit and clean process prunes the resource dictionaries of the forms and soft mask groups of the original document,
+     * {@link #addCopyTo(PDPage, ExistingPagesSizePredictor)} takes care of having them restored
+     */
+    private PDPage copyOf(PDPage page) {
         PDPage copy = new PDPage(page.getCOSObject().duplicate());
         copy.setCropBox(page.getCropBox());
         copy.setMediaBox(page.getMediaBox());

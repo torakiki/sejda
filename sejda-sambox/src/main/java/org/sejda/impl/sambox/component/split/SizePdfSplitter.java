@@ -82,16 +82,17 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
     }
 
     static class OutputSizeStrategy implements NextOutputStrategy {
-        private long sizeLimit;
-        private PDDocument document;
+        private final long sizeLimit;
+        private final PDDocument document;
         private ExistingPagesSizePredictor predictor;
-        private Supplier<ExistingPagesSizePredictor> predictorSupplier;
+        private final Supplier<ExistingPagesSizePredictor> predictorSupplier;
+        private final boolean optimize;
         private PageCopier copier;
 
         OutputSizeStrategy(PDDocument document, SplitBySizeParameters parameters, boolean optimize) {
             this.sizeLimit = parameters.getSizeToSplitAt();
             this.document = document;
-            this.copier = new PageCopier(optimize);
+            this.optimize = optimize;
             predictorSupplier = switch (parameters.compressionPolicy()) {
                 case COMPRESS ->
                         () -> ExistingPagesSizePredictor.instance(COMPRESS_STREAMS, OBJECT_STREAMS, XREF_STREAM);
@@ -109,6 +110,8 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         public void newPredictor() throws TaskIOException {
             try {
                 predictor = predictorSupplier.get();
+                // a new copier for each output, the same lifecycle of the hitter used by the PagesExtractor
+                copier = new PageCopier(optimize);
                 predictor.addIndirectReferenceFor(document.getDocumentInformation());
                 predictor.addIndirectReferenceFor(document.getDocumentCatalog().getViewerPreferences());
             } catch (IOException e) {
@@ -119,7 +122,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         public void addPage(int page) throws TaskIOException {
             try {
                 if (page <= document.getNumberOfPages()) {
-                    predictor.addPage(copier.copyOf(document.getPage(page - 1)));
+                    copier.addCopyTo(document.getPage(page - 1), predictor);
                 }
             } catch (IOException e) {
                 throw new TaskIOException("Unable to simulate page " + page + " addition", e);
@@ -129,6 +132,7 @@ public class SizePdfSplitter extends AbstractPdfSplitter<SplitBySizeParameters> 
         public void closePredictor() {
             IOUtils.closeQuietly(predictor);
             this.predictor = null;
+            this.copier = null;
         }
 
         @Override

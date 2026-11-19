@@ -49,6 +49,13 @@ public class NameResourcesDuplicator implements Consumer<PDPage> {
                 .orElseGet(COSDictionary::new);
         // resources are cached in the PDPage so make sure they are replaced
         page.setResources(new PDResources(resources));
+        duplicateNameDictionaries(resources);
+    }
+
+    /**
+     * Replaces the XObject, Font, ExtGState and Pattern dictionaries of the given resource dictionary with copies
+     */
+    public static void duplicateNameDictionaries(COSDictionary resources) {
         ofNullable(resources.getDictionaryObject(COSName.XOBJECT, COSDictionary.class)).map(COSDictionary::duplicate)
                 .ifPresent(d -> resources.setItem(COSName.XOBJECT, d));
         ofNullable(resources.getDictionaryObject(COSName.FONT, COSDictionary.class)).map(COSDictionary::duplicate)

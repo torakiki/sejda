@@ -19,13 +19,21 @@
 package org.sejda.impl.sambox.component.split;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.sejda.io.SeekableSources;
 import org.sejda.sambox.cos.COSArray;
+import org.sejda.sambox.cos.COSBase;
+import org.sejda.sambox.cos.COSDictionary;
 import org.sejda.sambox.cos.COSName;
 import org.sejda.sambox.cos.COSStream;
 import org.sejda.sambox.input.PDFParser;
+import org.sejda.sambox.output.ExistingPagesSizePredictor;
 import org.sejda.sambox.pdmodel.PDDocument;
 import org.sejda.sambox.pdmodel.PDPage;
+import org.sejda.sambox.pdmodel.PDResources;
+import org.sejda.sambox.pdmodel.graphics.form.PDFormXObject;
+import org.sejda.sambox.pdmodel.graphics.state.PDExtendedGraphicsState;
+import org.sejda.sambox.pdmodel.graphics.state.PDSoftMask;
 import org.sejda.sambox.pdmodel.interactive.action.PDActionGoTo;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotation;
 import org.sejda.sambox.pdmodel.interactive.annotation.PDAnnotationLink;
@@ -33,7 +41,6 @@ import org.sejda.sambox.pdmodel.interactive.documentnavigation.destination.PDDes
 import org.sejda.sambox.pdmodel.interactive.pagenavigation.PDThreadBead;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,7 +48,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author Andrea Vacondio
@@ -54,8 +68,13 @@ public class PageCopierTest {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/shared_resource_dic_w_images.pdf")))) {
             PDPage page = document.getPage(0);
-            PDPage copy = new PageCopier(false).copyOf(page);
-            PDPage optimizedCopy = new PageCopier(true).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            new PageCopier(true).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor, times(2)).addPage(captor.capture());
+            PDPage copy = captor.getAllValues().get(0);
+            PDPage optimizedCopy = captor.getAllValues().get(1);
             assertEquals(page.getMediaBox(), copy.getMediaBox());
             assertEquals(page.getCropBox(), copy.getCropBox());
             assertEquals(page.getRotation(), copy.getRotation());
@@ -71,7 +90,11 @@ public class PageCopierTest {
             PDPage page = document.getPage(0);
             page.setThreadBeads(List.of(new PDThreadBead()));
             assertFalse(page.getThreadBeads().isEmpty());
-            PDPage copy = new PageCopier(false).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor).addPage(captor.capture());
+            PDPage copy = captor.getValue();
             assertTrue(copy.getThreadBeads().isEmpty());
         }
     }
@@ -81,7 +104,11 @@ public class PageCopierTest {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/popup_annotation.pdf")))) {
             PDPage page = document.getPage(0);
-            PDPage copy = new PageCopier(false).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor).addPage(captor.capture());
+            PDPage copy = captor.getValue();
             copy.getAnnotations().stream().map(PDAnnotation::getCOSObject).forEach(d -> {
                 assertFalse(d.containsKey(COSName.PARENT));
                 assertFalse(d.containsKey(COSName.getPDFName("Popup")));
@@ -94,7 +121,11 @@ public class PageCopierTest {
         try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
                 getClass().getClassLoader().getResourceAsStream("pdf/forms/simple_form_with_full_dic.pdf")))) {
             PDPage page = document.getPage(0);
-            PDPage copy = new PageCopier(false).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor).addPage(captor.capture());
+            PDPage copy = captor.getValue();
             assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
                     page.getCOSObject().getDictionaryObject(COSName.ANNOTS));
             assertNotEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
@@ -116,7 +147,11 @@ public class PageCopierTest {
             action.setDestination(PDDestination.create(COSName.C));
             link.setAction(action);
             page.setAnnotations(List.of(link));
-            PDPage copy = new PageCopier(false).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor).addPage(captor.capture());
+            PDPage copy = captor.getValue();
             assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
                     page.getCOSObject().getDictionaryObject(COSName.ANNOTS));
             assertNotEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
@@ -138,7 +173,11 @@ public class PageCopierTest {
             PDActionGoTo action = new PDActionGoTo();
             link.setAction(action);
             page.setAnnotations(List.of(link));
-            PDPage copy = new PageCopier(false).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor).addPage(captor.capture());
+            PDPage copy = captor.getValue();
             assertEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
                     page.getCOSObject().getDictionaryObject(COSName.ANNOTS));
             assertNotEquals(page.getCOSObject().getDictionaryObject(COSName.ANNOTS),
@@ -158,7 +197,11 @@ public class PageCopierTest {
             PDPage page = document.getPage(0);
             assertNotNull(
                     page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSStream.class).getItem(COSName.ANNOTS));
-            PDPage copy = new PageCopier(false).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor).addPage(captor.capture());
+            PDPage copy = captor.getValue();
             assertNull(
                     copy.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSStream.class).getItem(COSName.ANNOTS));
         }
@@ -171,9 +214,131 @@ public class PageCopierTest {
             PDPage page = document.getPage(0);
             assertNotNull(page.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSArray.class)
                     .getObject(0, COSStream.class).getItem(COSName.ANNOTS));
-            PDPage copy = new PageCopier(false).copyOf(page);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            new PageCopier(false).addCopyTo(page, predictor);
+            ArgumentCaptor<PDPage> captor = ArgumentCaptor.forClass(PDPage.class);
+            verify(predictor).addPage(captor.capture());
+            PDPage copy = captor.getValue();
             assertNull(copy.getCOSObject().getDictionaryObject(COSName.CONTENTS, COSArray.class)
                     .getObject(0, COSStream.class).getItem(COSName.ANNOTS));
+        }
+    }
+
+    @Test
+    // form resources have the same Font, ExtGState and XObject dictionaries of the pages
+    public void optimizedCopyKeepsSourceFormSharingNameDictionariesWithPages() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_name_dics_page_and_form.pdf")));
+                ExistingPagesSizePredictor predictor = ExistingPagesSizePredictor.instance()) {
+            COSStream form = document.getPage(0).getResources().getCOSObject()
+                    .getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                    .getDictionaryObject(COSName.getPDFName("Fm"), COSStream.class);
+            COSBase formResources = form.getItem(COSName.RESOURCES);
+            new PageCopier(true).addCopyTo(document.getPage(0), predictor);
+            assertSame(formResources, form.getItem(COSName.RESOURCES));
+            PDResources page1Res = document.getPage(0).getResources();
+            assertNotNull(page1Res.getFont(COSName.getPDFName("F1")));
+            assertNotNull(page1Res.getExtGState(COSName.getPDFName("GS1")));
+            assertTrue(page1Res.isImageXObject(COSName.getPDFName("Im1")));
+            assertTrue(page1Res.isFormXObject(COSName.getPDFName("Fm")));
+            PDResources formRes = ((PDFormXObject) page1Res.getXObject(COSName.getPDFName("Fm"))).getResources();
+            assertNotNull(formRes.getFont(COSName.getPDFName("FN")));
+            assertNotNull(formRes.getExtGState(COSName.getPDFName("GSN")));
+            assertTrue(formRes.isImageXObject(COSName.getPDFName("ImN")));
+            PDResources page2Res = document.getPage(1).getResources();
+            assertNotNull(page2Res.getFont(COSName.getPDFName("F2")));
+            assertNotNull(page2Res.getExtGState(COSName.getPDFName("GS2")));
+            assertTrue(page2Res.isImageXObject(COSName.getPDFName("Im2")));
+        }
+    }
+
+    @Test
+    // form resources are the same resource dictionary of the pages
+    public void optimizedCopyKeepsSourceFormSharingPageResources() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_res_dic_page_and_form.pdf")));
+                ExistingPagesSizePredictor predictor = ExistingPagesSizePredictor.instance()) {
+            new PageCopier(true).addCopyTo(document.getPage(0), predictor);
+            PDResources page1Res = document.getPage(0).getResources();
+            assertNotNull(page1Res.getFont(COSName.getPDFName("F1")));
+            assertNotNull(page1Res.getExtGState(COSName.getPDFName("GS1")));
+            assertTrue(page1Res.isImageXObject(COSName.getPDFName("Im1")));
+            assertTrue(page1Res.isFormXObject(COSName.getPDFName("Fm")));
+            PDResources formRes = ((PDFormXObject) page1Res.getXObject(COSName.getPDFName("Fm"))).getResources();
+            assertNotNull(formRes.getFont(COSName.getPDFName("FN")));
+            assertNotNull(formRes.getExtGState(COSName.getPDFName("GSN")));
+            assertTrue(formRes.isImageXObject(COSName.getPDFName("ImN")));
+            PDResources page2Res = document.getPage(1).getResources();
+            assertNotNull(page2Res.getFont(COSName.getPDFName("F2")));
+            assertNotNull(page2Res.getExtGState(COSName.getPDFName("GS2")));
+            assertTrue(page2Res.isImageXObject(COSName.getPDFName("Im2")));
+        }
+    }
+
+    @Test
+    // soft mask group resources have the same Font, ExtGState and XObject dictionaries of the pages
+    public void optimizedCopyKeepsSourceSoftMaskSharingNameDictionariesWithPages() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_name_dics_page_and_softmask.pdf")));
+                ExistingPagesSizePredictor predictor = ExistingPagesSizePredictor.instance()) {
+            new PageCopier(true).addCopyTo(document.getPage(0), predictor);
+            PDResources page1Res = document.getPage(0).getResources();
+            assertNotNull(page1Res.getFont(COSName.getPDFName("F1")));
+            assertNotNull(page1Res.getExtGState(COSName.getPDFName("GS1")));
+            assertTrue(page1Res.isImageXObject(COSName.getPDFName("Im1")));
+            PDExtendedGraphicsState masked = page1Res.getExtGState(COSName.getPDFName("GSM"));
+            assertNotNull(masked);
+            PDSoftMask softMask = masked.getSoftMask();
+            assertNotNull(softMask);
+            PDResources maskRes = softMask.getGroup().getResources();
+            assertNotNull(maskRes.getFont(COSName.getPDFName("FN")));
+            assertNotNull(maskRes.getExtGState(COSName.getPDFName("GSN")));
+            assertTrue(maskRes.isImageXObject(COSName.getPDFName("ImN")));
+            PDResources page2Res = document.getPage(1).getResources();
+            assertNotNull(page2Res.getFont(COSName.getPDFName("F2")));
+            assertNotNull(page2Res.getExtGState(COSName.getPDFName("GS2")));
+            assertTrue(page2Res.isImageXObject(COSName.getPDFName("Im2")));
+        }
+    }
+
+    @Test
+    // form FmA on page 1 and form FmB on page 2 have the same resource dictionary
+    public void optimizedCopyKeepsSourceFormsSharingResources() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_res_dic_between_forms.pdf")));
+                ExistingPagesSizePredictor predictor = ExistingPagesSizePredictor.instance()) {
+            new PageCopier(true).addCopyTo(document.getPage(0), predictor);
+            PDResources page1Res = document.getPage(0).getResources();
+            assertTrue(page1Res.isFormXObject(COSName.getPDFName("FmA")));
+            PDResources formARes = ((PDFormXObject) page1Res.getXObject(COSName.getPDFName("FmA"))).getResources();
+            assertNotNull(formARes.getFont(COSName.getPDFName("F1")));
+            assertNotNull(formARes.getExtGState(COSName.getPDFName("GS1")));
+            assertTrue(formARes.isImageXObject(COSName.getPDFName("Im1")));
+            PDResources page2Res = document.getPage(1).getResources();
+            assertTrue(page2Res.isFormXObject(COSName.getPDFName("FmB")));
+            PDResources formBRes = ((PDFormXObject) page2Res.getXObject(COSName.getPDFName("FmB"))).getResources();
+            assertNotNull(formBRes.getFont(COSName.getPDFName("F2")));
+            assertNotNull(formBRes.getExtGState(COSName.getPDFName("GS2")));
+            assertTrue(formBRes.isImageXObject(COSName.getPDFName("Im2")));
+        }
+    }
+
+    @Test
+    public void optimizedCopyRestoresSourceWhenPredictionFails() throws IOException {
+        try (PDDocument document = PDFParser.parse(SeekableSources.inMemorySeekableSourceFrom(
+                getClass().getClassLoader().getResourceAsStream("pdf/shared_res_dic_page_and_form.pdf")))) {
+            COSStream form = document.getPage(0).getResources().getCOSObject()
+                    .getDictionaryObject(COSName.XOBJECT, COSDictionary.class)
+                    .getDictionaryObject(COSName.getPDFName("Fm"), COSStream.class);
+            COSBase formResources = form.getItem(COSName.RESOURCES);
+            ExistingPagesSizePredictor predictor = mock(ExistingPagesSizePredictor.class);
+            doThrow(new IOException()).when(predictor).addPage(any());
+            assertThrows(IOException.class, () -> new PageCopier(true).addCopyTo(document.getPage(0), predictor));
+            assertSame(formResources, form.getItem(COSName.RESOURCES));
+            PDResources page2Res = document.getPage(1).getResources();
+            assertNotNull(page2Res.getFont(COSName.getPDFName("F2")));
+            assertNotNull(page2Res.getExtGState(COSName.getPDFName("GS2")));
+            assertTrue(page2Res.isImageXObject(COSName.getPDFName("Im2")));
         }
     }
 

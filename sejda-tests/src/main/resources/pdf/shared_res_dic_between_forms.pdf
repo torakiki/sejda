@@ -1,0 +1,128 @@
+%PDF-1.7
+%‚„œ”
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Type /ExtGState /CA 0.9 /ca 0.9 >>
+endobj
+6 0 obj
+<< /Type /ExtGState /CA 0.8 /ca 0.8 >>
+endobj
+7 0 obj
+<< /Type /ExtGState /CA 0.7 /ca 0.7 >>
+endobj
+8 0 obj
+<< /Type /ExtGState /CA 0.6 /ca 0.6 >>
+endobj
+9 0 obj
+<< /Type /XObject /Subtype /Image /Width 2 /Height 2 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /ASCIIHexDecode /Length 25 >>
+stream
+FF0000FF0000FF0000FF0000>
+endstream
+endobj
+10 0 obj
+<< /Type /XObject /Subtype /Image /Width 2 /Height 2 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /ASCIIHexDecode /Length 25 >>
+stream
+00FF0000FF0000FF0000FF00>
+endstream
+endobj
+11 0 obj
+<< /Type /XObject /Subtype /Image /Width 2 /Height 2 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /ASCIIHexDecode /Length 25 >>
+stream
+0000FF0000FF0000FF0000FF>
+endstream
+endobj
+12 0 obj
+<< /Type /XObject /Subtype /Image /Width 2 /Height 2 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /ASCIIHexDecode /Length 25 >>
+stream
+808080808080808080808080>
+endstream
+endobj
+13 0 obj
+<< /Font << /F1 1 0 R /F2 2 0 R /FN 3 0 R /FU 4 0 R >> /ExtGState << /GS1 5 0 R /GS2 6 0 R /GSN 7 0 R /GSU 8 0 R >> /XObject << /Im1 9 0 R /Im2 10 0 R /ImN 11 0 R /ImU 12 0 R >> >>
+endobj
+14 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 612 792] /Resources 13 0 R /Length 94 >>
+stream
+q /GS1 gs BT /F1 18 Tf 72 720 Td (Page 1: F1 GS1 Im1) Tj ET Q
+q 80 0 0 80 400 690 cm /Im1 Do Q
+endstream
+endobj
+15 0 obj
+<< /Type /XObject /Subtype /Form /BBox [0 0 612 792] /Resources 13 0 R /Length 94 >>
+stream
+q /GS2 gs BT /F2 18 Tf 72 720 Td (Page 2: F2 GS2 Im2) Tj ET Q
+q 80 0 0 80 400 690 cm /Im2 Do Q
+endstream
+endobj
+16 0 obj
+<< /XObject << /FmA 14 0 R /FmB 15 0 R >> >>
+endobj
+17 0 obj
+<< /Type /Pages /Kids [19 0 R 21 0 R] /Count 2 /MediaBox [0 0 612 792] >>
+endobj
+18 0 obj
+<<  /Length 11 >>
+stream
+q /FmA Do Q
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 17 0 R /Resources 16 0 R /Contents 18 0 R >>
+endobj
+20 0 obj
+<<  /Length 11 >>
+stream
+q /FmB Do Q
+endstream
+endobj
+21 0 obj
+<< /Type /Page /Parent 17 0 R /Resources 16 0 R /Contents 20 0 R >>
+endobj
+22 0 obj
+<< /Type /Catalog /Pages 17 0 R >>
+endobj
+23 0 obj
+<< /Title (Forms drawn on different pages share the same resource dictionary) /Producer (sejda fixture generator) >>
+endobj
+xref
+0 24
+0000000000 65535 f 
+0000000015 00000 n 
+0000000112 00000 n 
+0000000211 00000 n 
+0000000306 00000 n 
+0000000408 00000 n 
+0000000462 00000 n 
+0000000516 00000 n 
+0000000570 00000 n 
+0000000624 00000 n 
+0000000816 00000 n 
+0000001009 00000 n 
+0000001202 00000 n 
+0000001395 00000 n 
+0000001592 00000 n 
+0000001805 00000 n 
+0000002018 00000 n 
+0000002079 00000 n 
+0000002169 00000 n 
+0000002232 00000 n 
+0000002316 00000 n 
+0000002379 00000 n 
+0000002463 00000 n 
+0000002514 00000 n 
+trailer
+<< /Size 24 /Root 22 0 R /Info 23 0 R >>
+startxref
+2647
+%%EOF
