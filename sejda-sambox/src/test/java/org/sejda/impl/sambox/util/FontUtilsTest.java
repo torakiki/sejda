@@ -419,6 +419,21 @@ public class FontUtilsTest {
     }
 
     @Test
+    public void textFragmentsUseTheWidthOfTheEncodedCharacterCode() throws TaskIOException, IOException {
+        // a simple font with WinAnsiEncoding, /Widths for codes 32-255 and no /MissingWidth
+        PDDocument doc = getTestDoc("pdf/font-winansi-no-missing-width.pdf");
+        PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));
+
+        // the right single quote U+2019 is code 146 in this font. Its code point is not a code of the font
+        assertThat(font.encode("\u2019"), is(new byte[] { (byte) 146 }));
+        assertThat(font.getWidth(146), is(222f));
+        assertThat(font.getWidth(0x2019), is(0f));
+
+        // the text is not split at the quote
+        assertThat(FontUtils.resolveTextFragments("I\u2019ve kept", font), is(List.of("I\u2019ve kept")));
+    }
+
+    @Test
     public void vectorFontWithSpace() throws TaskIOException, IOException {
         PDDocument doc = getTestDoc("pdf/font-with-vector-font.pdf");
         PDFont font = doc.getPage(0).getResources().getFont(COSName.getPDFName("F1"));

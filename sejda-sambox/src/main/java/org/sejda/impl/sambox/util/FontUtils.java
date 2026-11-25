@@ -621,6 +621,29 @@ public final class FontUtils {
     }
 
     /**
+     * @return true if the font declares a zero width for the character
+     */
+    private static boolean hasZeroWidth(int codePoint, PDFont font) throws IOException {
+        if (font instanceof PDSimpleFont) {
+            // the character code is not the code point: text is encoded first. Eg: with WinAnsiEncoding the
+            // right single quote U+2019 is code 146, and subsets can assign any code to a character.
+            // Looking up the width of code 0x2019 found no width (or the missing width), and split the text
+            try {
+                byte[] encoded = font.encode(new String(Character.toChars(codePoint)));
+                if (encoded.length == 1) {
+                    return font.getWidth(encoded[0] & 0xFF) == 0;
+                }
+            } catch (IllegalArgumentException | UnsupportedOperationException | NullPointerException e) {
+                // cannot be encoded with this font, look it up as before
+            }
+        }
+        // Composite fonts are left as they were, on purpose: this looks up the width of the wrong glyph for them
+        // (the code point used as CID), so it rarely splits. Looking up the right one would split at every
+        // combining mark (zero advance, eg: Thai vowels), and each fragment is positioned on its own.
+        return font.getWidth(codePoint) == 0;
+    }
+
+    /**
      * Splits an input string into multiple fragments, when glyphs with 0 width are detected
      */
     public static List<String> resolveTextFragments(String input, PDFont font) {
@@ -635,7 +658,7 @@ public final class FontUtils {
         
         for(int codePoint: input.codePoints().toArray()){
             try {
-                if(font.getWidth(codePoint) == 0) {
+                if(hasZeroWidth(codePoint, font)) {
                     if(current.size() > 0) {
                         StringBuilder s = new StringBuilder();
                         current.stream().map(Character::toChars).forEach(s::append);
