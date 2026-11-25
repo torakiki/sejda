@@ -189,7 +189,10 @@ public class PageTextWriter {
                                     .getTranslateInstance(resolvedPosition.getX(), resolvedPosition.getY()));
                         }
 
-                        if (fauxItalic) {
+                        // an italic font replaced by an upright fallback font keeps its slant
+                        boolean italicLost = font != null && FontUtils.isItalic(font) && !FontUtils.isItalic(
+                                resolvedFont);
+                        if (fauxItalic || italicLost) {
                             AffineTransform at = AffineTransform.getShearInstance(0.35, 0);
                             textMatrix.concatenate(new Matrix(at));
                         }
